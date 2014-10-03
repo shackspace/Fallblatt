@@ -24,6 +24,20 @@ $page_content_2 = "' autofocus></input>
 </div>
 </body></html>";
 
+$help = "action=text    text=(String)</br>
+    Sets a text, fills the rest with blanks</br></br>
+action=char    position=(integer)    char=(String)    [rotate=(String)]</br>
+    writes a single character. only first character is used. If rotate equals \"1\" or \"true\", the display will rotate. </br></br>
+action=clear</br>
+    Fills the display with blanks. Blank Characters won't turn again</br></br>
+action=reset</br>
+    Resets the display. All Characters will rotate</br></br>
+action=rotate</br>
+	Starts the Display</br></br>
+action=rawchar    pos=(integer)    text=(String)</br>
+	This is legacy, don't use it (Only there because momo is to lazy to update his Script)</br></br>
+action=raw</br>
+	You don't want to use this. It's only for debugging";
 
 $highest = 79;	//höchste vergebene Adresse
 $mapping = array(	0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5, 6=>6, 7=>7, 8=>8, 9=>9,
@@ -155,7 +169,12 @@ function action_text($text){
 
 function main(){
 //	phpinfo();
-	global $mapping;
+	global $help;
+	if(isset($_GET["help"])){
+		echo($help);
+		finish();
+	}
+	
 	if(isset($_GET["action"]) && $_GET["action"] != ""){
 		$action = $_GET["action"];
 		
@@ -171,7 +190,7 @@ function main(){
 		}
 		
 		else if($action == "char"){		// write single char
-			if(isset($_GET["position"]) && ($_GET["position"] != "") && isset($_GET["char"]) && (strlen ($_GET["char"]) == 1)){
+			if(isset($_GET["position"]) && ($_GET["position"] != "") && isset($_GET["char"]) && ($_GET["char"]) != ""){
 				$pos = (integer) $_GET["position"];
 				action_char($pos, $_GET["char"]);
 				if(isset($_GET["rotate"]) && ($_GET["rotate"] == "true" || $_GET["rotate"] == "1")){
@@ -209,6 +228,20 @@ function main(){
 			else{
 				finish_t("argument \"data\" is missing");
 			}
+		}
+		
+		else if($action == "rawchar"){		// write raw hex to interface
+			$pos = (integer) $_GET["pos"];
+			$addr = $mapping[$pos];
+			$text = $_GET["text"];
+			if($addr > 127){
+				$command = "C8";
+			}
+			else{
+				$command = "88";
+			}
+			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . $text;
+			write($command . "81");
 		}
 	}
 	finish_n();
