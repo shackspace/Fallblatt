@@ -1,8 +1,29 @@
-<html>
+<?php
+$page_content_1 = "<html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8"></meta>
+<meta http-equiv='content-type' content='text/html; charset=utf-8'></meta>
 </head>
-<body><?php
+<body>
+<div id='container' align='center' width=* height=*>
+<div id='input' border='1px' border-color='black' border-radius='6px';>
+<form method='get' action='index_neu.php'>
+<input type='text' name='text' value='";
+
+$page_content_2 = "' autofocus></input>
+</br>
+<input type='submit'>
+<input type='hidden', name='action', value='text'>
+<input type='hidden', name='source', value='browser_basic'>
+</input1>
+</form>
+</br>
+<p>0-9   A-Z</br>Ä  Ö  Ü  -  .  (  )  !  :  /  \"  ,  =  Å  Ø</p>
+</br>
+<a href='./direct.html'>Fancy Variante</a>
+</div>
+</div>
+</body></html>";
+
 
 $highest = 79;	//höchste vergebene Adresse
 $mapping = array(	0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5, 6=>6, 7=>7, 8=>8, 9=>9,
@@ -19,13 +40,9 @@ function write($hex){
 	file_put_contents("/dev/ttyAMA0", pack('H*', $hex), (FILE_APPEND | LOCK_EX));
 }
 
-function to_array($str){
-	return str_split($str, 1);
-}
 
-function clear(){
-	write("82");
-}
+
+
 
 function to_hex($char){
 	$temp = "20";
@@ -52,94 +69,145 @@ function to_hex($char){
 					return $temp;
 }
 
-function main(){
+function to_array($str){
+	return str_split($str, 1);
+}
+
+function reset_a(){
+	write("82");
+}
+
+function char_to_command($char, $pos){
 	global $mapping;
-	if(isset($_GET["clear"])){	// RESET
-		clear();
-	}
-	
-	if(isset($_GET["action"]) && $_GET["action"] == "char"){	// einzelnes Zeichen
-		$pos = (integer) $_GET["pos"];
-		$addr = $mapping[$pos];
-		$text = $_GET["text"];
-		if($addr > 127){
-				$command = "C8";
-			}
-			else{
-				$command = "88";
-			}
-			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . to_hex($text);
-			write($command . "81");
-	}
-	
-	if(isset($_GET["action"]) && $_GET["action"] == "raw"){		// roher Bytecode (Hexformat in ASCII)
-		$text = $_GET["text"];
-		write($text);
-	}
-	
-	if(isset($_GET["action"]) && $_GET["action"] == "rawchar"){		// roher Bytecode mit Position
-		$pos = (integer) $_GET["pos"];
-		$addr = $mapping[$pos];
-		$text = $_GET["text"];
-		if($addr > 127){
-				$command = "C8";
-			}
-			else{
-				$command = "88";
-			}
-			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . $text;
-			write($command . "81");
-	}
-	
-	else if(isset($_GET["text"])){		// vollständiger Text
-		$in_text = utf8_decode($_GET["text"]);
-		$array = to_array($in_text);
-		$pos = 0;
-		$command = "";
-		if(isset($_GET["position"]) && $_GET["position"] != ""){
-			$pos = $_GET["position"];
+	$addr = $mapping[$pos];
+	if($addr > 127){
+			$command = "C8";
 		}
-		foreach ($array as $char){
-			$addr = $mapping[$pos];
-			if($addr > 127){
-				$command = $command . "C8";
-			}
-			else{
-				$command = $command . "88";
-			}
-			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . to_hex($char);
-			$pos = $pos + 1;
-		}
-		global $highest;
-		while($pos <= $highest){
-			$addr = $mapping[$pos];
-			if($addr > 127){
-				$command = $command . "C8";
-			}
-			else{
-				$command = $command . "88";
-			}
-			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . "20";
-			$pos = $pos + 1;
-		}
-		write($command . "81");
+	else{
+		$command = "88";
 	}
+	$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . to_hex($char);
+	return $command;
+}
+
+function rotate(){
+	write("81");
+}
+
+function finish_t($text){
+	global $page_content_1;
+	global $page_content_2;
+	if(isset($_GET["source"]) && $_GET["source"] == "browser_basic"){
+		echo ($page_content_1);
+		echo ($_GET["text"]);
+		echo ($page_content_2);
+	}
+	else{
+		echo($text);
+	}
+	exit(0);
+}
+
+function finish(){
+	if(isset($_GET["source"]) && $_GET["source"] == "browser_basic"){
+		echo ($page_content_1);
+		echo ($_GET["text"]);
+		echo ($page_content_2);
+	}
+	exit(0);
+}
+
+function finish_n(){
+	global $page_content_1;
+	global $page_content_2;
+	echo ($page_content_1);
+	echo ($page_content_2);
+	exit(0);
+}
+
+function action_char($position, $char){					// write single char
+	$array = to_array($char);
+	$command = char_to_command($array[0], $position);
+	write($command);
+}
+
+function action_text($text){
+	global $highest;
+	$array = to_array($text);
+	$position = 0;
+	$offset = 0;
+	if(isset($_GET["offset"])){
+		$offset = (integer) $_GET["offset"];
+	}
+	while($position < $offset){
+		action_char($position, " ");
+		$position++;
+	}
+	foreach ($array as $char){
+		action_char($position, $char);
+		$position = $position + 1;
+	}
+	while($position <= $highest){
+		action_char($position, " ");
+		$position = $position + 1;
+	}
+}
+
+function main(){
+//	phpinfo();
+	global $mapping;
+	if(isset($_GET["action"]) && $_GET["action"] != ""){
+		$action = $_GET["action"];
+		
+		if($action == "text"){			// write text, append blank
+			if(isset($_GET["text"])){
+				action_text($_GET["text"]);
+				rotate();
+				finish();
+			}
+			else{
+				finish_t("argument text is missing");
+			}
+		}
+		
+		else if($action == "char"){		// write single char
+			if(isset($_GET["position"]) && ($_GET["position"] != "") && isset($_GET["char"]) && (strlen ($_GET["char"]) == 1)){
+				$pos = (integer) $_GET["position"];
+				action_char($pos, $_GET["char"]);
+				if(isset($_GET["rotate"]) && ($_GET["rotate"] == "true" || $_GET["rotate"] == "1")){
+					rotate();
+				}
+				finish();
+			}
+			else{
+				finish_t("argument \"position\" or \"char\" is missing or \"char\" is not 1 long");
+			}
+		}
+		
+		else if($action == "clear"){	// fill with blank
+			action_text(" ");
+			rotate();
+			finish();
+		}
+		
+		else if($action == "reset"){	// reset modules
+			reset_a();
+			finish();
+		}
+		
+		else if($action == "raw"){		// write raw hex to interface
+			if(isset($_GET["data"])){
+				$data = $_GET["data"];
+				write($data);
+				finish();
+			}
+			else{
+				finish_t("argument \"data\" is missing");
+			}
+		}
+	}
+	finish_n();
 }
 
 main();
 ?>
-
-<div id="container" align="center" width=* height=*>
-<div id="input" border="1px" border-color="black" border-radius="6px";>
-<form method="get" action="index.php">
-<input type="text" name="text" length="4" <?php echo("value=\"" . $_GET["text"] . "\""); ?> autofocus></input>
-</br>
-<input type="submit"></input1>
-</form>
-</br>
-<p>0-9   A-Z</br>Ä  Ö  Ü  -  .  (  )  !  :  /  "  ,  =  Å  Ø</p>
-</br>
-<a href="./direct.html">Fancy Variante</a>
-</div>
-</div>
-</body></html>
