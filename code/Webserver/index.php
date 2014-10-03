@@ -38,6 +38,8 @@ action=rotate</br>
 	Starts the Display</br></br>
 action=rawchar    pos=(integer)    text=(String)</br>
 	This is legacy, don't use it (Only there because momo is to lazy to update his Script)</br></br>
+clear=(string)</br>
+	This is legacy, don't use it (Only there because momo is to lazy to update his Script)</br></br>
 action=raw    data=(string)</br>
 	You don't want to use this. It's only for debugging";
 
@@ -176,6 +178,11 @@ function main(){
 	global $help;
 	if(isset($_GET["help"])){
 		echo($help);
+		finish();
+	}
+	
+	if(isset($_GET["clear"])){		// write raw hex to interface
+		reset_a();
 		finish();
 	}
 	
