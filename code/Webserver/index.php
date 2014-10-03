@@ -6,7 +6,7 @@ $page_content_1 = "<html>
 <body>
 <div id='container' align='center' width=* height=*>
 <div id='input' border='1px' border-color='black' border-radius='6px';>
-<form method='get' action='index_neu.php'>
+<form method='get' action='index.php'>
 <input type='text' name='text' value='";
 
 $page_content_2 = "' autofocus></input>
@@ -20,6 +20,8 @@ $page_content_2 = "' autofocus></input>
 <p>0-9   A-Z</br>Ä  Ö  Ü  -  .  (  )  !  :  /  \"  ,  =  Å  Ø</p>
 </br>
 <a href='./direct.html'>Fancy Variante</a>
+</br>
+<a href='./index.php?help=1'>Help</a>
 </div>
 </div>
 </body></html>";
@@ -36,7 +38,7 @@ action=rotate</br>
 	Starts the Display</br></br>
 action=rawchar    pos=(integer)    text=(String)</br>
 	This is legacy, don't use it (Only there because momo is to lazy to update his Script)</br></br>
-action=raw</br>
+action=raw    data=(string)</br>
 	You don't want to use this. It's only for debugging";
 
 $highest = 79;	//höchste vergebene Adresse
@@ -109,9 +111,9 @@ function rotate(){
 }
 
 function finish_t($text){
-	global $page_content_1;
-	global $page_content_2;
 	if(isset($_GET["source"]) && $_GET["source"] == "browser_basic"){
+		global $page_content_1;
+		global $page_content_2;
 		echo ($page_content_1);
 		echo ($_GET["text"]);
 		echo ($page_content_2);
@@ -124,6 +126,8 @@ function finish_t($text){
 
 function finish(){
 	if(isset($_GET["source"]) && $_GET["source"] == "browser_basic"){
+		global $page_content_1;
+		global $page_content_2;
 		echo ($page_content_1);
 		echo ($_GET["text"]);
 		echo ($page_content_2);
@@ -219,18 +223,8 @@ function main(){
 			finish();
 		}
 		
-		else if($action == "raw"){		// write raw hex to interface
-			if(isset($_GET["data"])){
-				$data = $_GET["data"];
-				write($data);
-				finish();
-			}
-			else{
-				finish_t("argument \"data\" is missing");
-			}
-		}
-		
-		else if($action == "rawchar"){		// write raw hex to interface
+		else if($action == "rawchar"){		// legacy, don't use
+			global $mapping;
 			$pos = (integer) $_GET["pos"];
 			$addr = $mapping[$pos];
 			$text = $_GET["text"];
@@ -240,8 +234,20 @@ function main(){
 			else{
 				$command = "88";
 			}
-			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . $text;
-			write($command . "81");
+			$command = $command . str_pad(dechex((float) $addr), 2, '0', STR_PAD_LEFT) . $text . "81";
+			write($command);
+			finish();
+		}
+		
+		else if($action == "raw"){		// write raw hex to interface
+			if(isset($_GET["data"])){
+				$data = $_GET["data"];
+				write($data);
+				finish();
+			}
+			else{
+				finish_t("argument \"data\" is missing");
+			}
 		}
 	}
 	finish_n();
