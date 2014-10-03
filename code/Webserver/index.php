@@ -195,6 +195,11 @@ function main(){
 			finish();
 		}
 		
+		else if($action == "rotate"){	// reset modules
+			rotate();
+			finish();
+		}
+		
 		else if($action == "raw"){		// write raw hex to interface
 			if(isset($_GET["data"])){
 				$data = $_GET["data"];
