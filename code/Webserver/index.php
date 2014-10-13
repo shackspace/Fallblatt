@@ -26,8 +26,8 @@ $page_content_2 = "' autofocus></input>
 </div>
 </body></html>";
 
-$help = "action=text    text=(String)</br>
-    Sets a text, fills the rest with blanks</br></br>
+$help = "action=text    text=(String)    [offset=(integer)]</br>
+    Sets a text, fills the rest with blanks. Offset should be self explaining</br></br>
 action=char    position=(integer)    char=(String)    [rotate=(String)]</br>
     writes a single character. only first character is used. If rotate equals \"1\" or \"true\", the display will rotate. </br></br>
 action=clear</br>
