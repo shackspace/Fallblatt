@@ -1,5 +1,7 @@
 # Fallblattanzeige
 
+Ansteuern einer Funkwerk ITK Fallblattanzeige mit einem ESP32
+
 ## Projektziel
 Die Fallblattanzeige in der Lounge deployen und versch. Möglichkeiten bieten,
 diese mit Inhalten zu bespaßen.

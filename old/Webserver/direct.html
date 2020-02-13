@@ -1,0 +1,318 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"></meta>
+	<script type="text/javascript" src="./jquery-2.1.1.min.js"></script>
+	<style type="text/css">
+		body{
+			background-color:#000000;
+			margin:0;
+			padding:0;
+		}
+		table{
+			background-color:#ffffff;
+			margin:0;
+			padding:0;
+			border:0;
+		}
+		tr{
+			margin:0;
+			padding:0;
+			border:0;
+		}
+		td{
+			margin:0;
+			padding:0;
+			border:0;
+		}
+		div.a{
+			font-size:20px;
+		}
+		div.b{
+			margin-left:10px;
+			font-size:20px;
+		}
+		div.wrapper{
+			background-color:#000000;
+			margin:0;
+			padding:3px;
+		}
+		div.wrapper2{
+			background-color:#000000;
+			margin:0;
+			padding:0;
+		}
+		div.content{
+			width:50px;
+			height:70px;
+			background-color:#ffffff;
+			margin:0;
+			padding:0;
+			font-size:50px;
+			text-align:center;
+		}
+		div.curser{
+			width:5px;
+			height:70px;
+			background-color:#ffffff;
+			margin:0;
+			padding:0;
+			font-size:50px;
+			text-align:center;
+		}
+	</style>	
+	
+	
+	<script type="text/javascript">
+		var rows = 4;
+		var columns = 20;
+		var highest = rows*columns - 1;
+		var next_pos = 0;
+		var last_pos = 0;
+		var curser_pos = 0;
+		function keydown(event){		// Für Sondertasten
+			switch(event.keyCode){
+				case 8:		//	Backspace
+					if(curser_pos > 0){
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+						curser_pos--;
+						document.getElementById(((curser_pos).toString()) + "a").innerHTML=" ";
+						jQuery.get("index.php?action=rawchar&text=20&pos=" + curser_pos.toString());
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+					}
+					break;
+				case 37:	//	Pfeil links
+					if(curser_pos > 0){
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+						curser_pos--;
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+					}
+					break;
+				case 39:	//	Pfeil rechts
+					if(curser_pos <= highest){
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+						curser_pos++;
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+					}
+					break;
+				case 38:	//	Pfeil hoch
+					if(curser_pos > 19){
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+						curser_pos = curser_pos - 20;
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+					}
+					break;
+				case 40:	//	Pfeil runter
+					if(curser_pos < highest - 19){
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+						curser_pos = curser_pos + 20;
+						document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+					break;
+				}
+				return true;
+			}
+		}
+		
+		
+		function keypress(event){
+			if(curser_pos <= highest){
+			var text = "";
+			var code = "";
+			switch(event.charCode){
+				case 48: text = "0"; code = "21"; break;
+				case 49: text = "1"; code = "22"; break;
+				case 50: text = "2"; code = "23"; break;
+				case 51: text = "3"; code = "24"; break;
+				case 52: text = "4"; code = "25"; break;
+				case 53: text = "5"; code = "26"; break;
+				case 54: text = "6"; code = "27"; break;
+				case 55: text = "7"; code = "28"; break;
+				case 56: text = "8"; code = "29"; break;
+				case 57: text = "9"; code = "2A"; break;
+				
+				case 65: text = "A"; code = "2B"; break;
+				case 66: text = "B"; code = "2C"; break;
+				case 67: text = "C"; code = "2D"; break;
+				case 68: text = "D"; code = "2E"; break;
+				case 69: text = "E"; code = "2F"; break;
+				case 70: text = "F"; code = "30"; break;
+				case 71: text = "G"; code = "31"; break;
+				case 72: text = "H"; code = "32"; break;
+				case 73: text = "I"; code = "33"; break;
+				case 74: text = "J"; code = "34"; break;
+				case 75: text = "K"; code = "35"; break;
+				case 76: text = "L"; code = "36"; break;
+				case 77: text = "M"; code = "37"; break;
+				case 78: text = "N"; code = "38"; break;
+				case 79: text = "O"; code = "39"; break;
+				case 80: text = "P"; code = "3A"; break;
+				case 81: text = "Q"; code = "3B"; break;
+				case 82: text = "R"; code = "3C"; break;
+				case 83: text = "S"; code = "3D"; break;
+				case 84: text = "T"; code = "3E"; break;
+				case 85: text = "U"; code = "3F"; break;
+				case 86: text = "V"; code = "40"; break;
+				case 87: text = "W"; code = "41"; break;
+				case 88: text = "X"; code = "42"; break;
+				case 89: text = "Y"; code = "43"; break;
+				case 90: text = "Z"; code = "44"; break;
+				
+				case 196: text = "Ä"; code = "45"; break;
+				case 214: text = "Ö"; code = "46"; break;
+				case 220: text = "Ü"; code = "47"; break;
+				
+				case 97: text = "A"; code = "2B"; break;
+				case 98: text = "B"; code = "2C"; break;
+				case 99: text = "C"; code = "2D"; break;
+				case 100: text = "D"; code = "2E"; break;
+				case 101: text = "E"; code = "2F"; break;
+				case 102: text = "F"; code = "30"; break;
+				case 103: text = "G"; code = "31"; break;
+				case 104: text = "H"; code = "32"; break;
+				case 105: text = "I"; code = "33"; break;
+				case 106: text = "J"; code = "34"; break;
+				case 107: text = "K"; code = "35"; break;
+				case 108: text = "L"; code = "36"; break;
+				case 109: text = "M"; code = "37"; break;
+				case 110: text = "N"; code = "38"; break;
+				case 111: text = "O"; code = "39"; break;
+				case 112: text = "P"; code = "3A"; break;
+				case 113: text = "Q"; code = "3B"; break;
+				case 114: text = "R"; code = "3C"; break;
+				case 115: text = "S"; code = "3D"; break;
+				case 116: text = "T"; code = "3E"; break;
+				case 117: text = "U"; code = "3F"; break;
+				case 118: text = "V"; code = "40"; break;
+				case 119: text = "W"; code = "41"; break;
+				case 120: text = "X"; code = "42"; break;
+				case 121: text = "Y"; code = "43"; break;
+				case 122: text = "Z"; code = "44"; break;
+				
+				case 228: text = "Ä"; code = "45"; break;
+				case 246: text = "Ö"; code = "46"; break;
+				case 252: text = "Ü"; code = "47"; break;
+				
+				case 32: text = " "; code = "20"; break;
+				case 45: text = "-"; code = "48"; break;
+				case 46: text = "."; code = "49"; break;
+				case 40: text = "("; code = "4A"; break;
+				case 41: text = ")"; code = "4B"; break;
+				case 33: text = "!"; code = "4C"; break;
+				case 58: text = ":"; code = "4D"; break;
+				case 47: text = "/"; code = "4E"; break;
+				case 34: text = "\""; code = "4F"; break;
+				case 44: text = ","; code = "50"; break;
+				case 61: text = "="; code = "51"; break;
+				case 43: text = "Å"; code = "52"; break;
+				case 35: text = "Ø"; code = "53"; break;
+			}
+			if(text != ""){
+				document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ffffff");
+				document.getElementById((curser_pos.toString()) + "a").innerHTML=text;
+				jQuery.get("index.php?action=rawchar&text=" + code + "&pos=" + curser_pos.toString());
+				if(curser_pos <= highest){
+					curser_pos++;
+				}
+				document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+			}
+			}
+			return true;
+		}
+		
+		function suppressBackspace(event) {
+			event = event || window.event;
+			var target = event.target || event.srcElement;
+			
+			if (event.keyCode == 8 && !/input|textarea/i.test(target.nodeName)) {
+				return false;
+			}
+		}
+		
+		function set(field){
+			document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#fffff");
+			curser_pos = field;
+			document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+		}
+		
+		function reset(){
+			document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#fffff");
+			curser_pos = 0;
+			document.getElementById(curser_pos.toString()).setAttribute("style", "background-color:#ff0000");
+			for(i=0; i <= highest; i++){
+				document.getElementById((i.toString()) + "a").innerHTML="";
+			}
+			jQuery.get("index.php?clear=a");
+		}
+		
+		function start(){
+			var data = "<table>";
+			for(i = 0; i < rows; i++){
+				data = data + "<tr>";
+				for(j = 0; j < columns; j++){
+					var number = 20*i + j;
+					data = data + "<td><div id=\"" + number.toString() + "\" class=\"curser\" onclick=\"set(" + number.toString() + ");\"></div></td><td><div class=\"wrapper\"><div id=\"" + number.toString() + "a\" class=\"content\" onclick=\"set(" + number.toString() + ");\"></div></div></td>";
+				}
+				if(i == rows - 1){
+					data = data + "<td><div id=\"" + (rows*columns).toString() + "\" class=\"curser\" onclick=\"set(80);\"></div></td>"
+				}
+				data = data + "</tr>";
+			}
+			data = data + "</table>";
+			document.getElementById("main").innerHTML=data;
+			document.getElementById("0").setAttribute("style", "background-color:#ff0000");
+			
+		}
+		
+		document.onkeydown = suppressBackspace;
+		document.onkeypress = suppressBackspace;
+		document.addEventListener('keydown', suppressBackspace, false);
+		document.addEventListener('keypress', suppressBackspace, false);
+		document.addEventListener('keydown', keydown, false);
+		document.addEventListener('keypress', keypress, false);
+		
+	</script>
+</head>
+<body onload="start()">	<!--  onkeydown="keydown()" onkeypress="keypress()" -->
+	<div id="main">
+	</div>
+	<div id="control" style="margin-top:10px">
+		<table>
+			<tr>
+				<td>
+					<div class="a">
+						<p>Verfügbare Zeichen:</p>
+					</div>
+				</td>
+				<td>
+					<div class="b">
+						0-9
+					</div>
+				</td>
+				<td>
+					<div class="b">
+						A-Z
+					</div>
+				</td>
+				<td>
+					<div class="b">
+						Ä  Ö  Ü  -  .  (  )  !  :  /  "  ,  =  Å  Ø
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<div class="a">
+						Das Zeichen "Å" lässt sich mit "+" schreiben, "Ø" mit "#"
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" onclick="reset();">
+					<div class="a" style="text-align:center; background-color:#aaaaaa">
+						Anzeige zurücksetzen
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

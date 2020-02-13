@@ -1,0 +1,23 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Setup Serial Port to 4800 baud with no parity
+stty -F /dev/ttyAMA0 speed 4800 min 0 parenb inpck -icrnl -ixon -opost -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke
+
+# Make Serial Port accessible for webserver
+chmod 666 /dev/ttyAMA0
+
+# Start automated messages
+bash -c "/home/pi/start.sh > /dev/null 2>&1 &"
+
+exit 0
