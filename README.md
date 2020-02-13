@@ -35,3 +35,21 @@ Dieser kommuniziert dann über einen UART mit den Modulen auf der Fallblattanzei
   - XY-Access
     - Port: 8002
     - Paket enthält `X;Y;…`
+
+## Test-Sequenzen
+
+### Full Mode
+Praktisch zum Testen in der Entwicklungsphase, löscht alle Anzeigen
+und ersetzt den Inhalt der Anzeige mit dem gesendeten Datagramm:
+
+```
+nc -u 10.42.25.49 8001
+```
+
+### Line Mode
+Praktisch zum Testen der gesamten Anzeige. Pusht eine Zeile Text an die
+Fallblattanzeige und scrollt ggf. den Rest nach oben.
+
+```
+nc -u 10.42.25.49 8000
+```
