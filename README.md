@@ -35,6 +35,23 @@ Dieser kommuniziert dann über einen UART mit den Modulen auf der Fallblattanzei
   - XY-Access
     - Port: 8002
     - Paket enthält `X;Y;…`
+- TCP-API
+  - Standard: Append Mode → alles was übertragen wird, wird an die Anzeige angehängt
+  - DC1: Clear Screen and Home → Lösche Anzeige und bewege Cursor nach (0,0)
+  - DC2: Home Cursor
+  - DC3: Set Cursor → Lese `{DC2}x;y;` und setze den Cursor auf (x,y).
+- MQTT-API
+  - `fallblatt/line` → publish eines utf8-strings, welcher als zeile angehängt wird
+  - `fallblatt/screen` → publish, welcher den ganzen Inhalt ersetzt
+  - `fallblatt/pos/x/y` → publish, welcher an (x,y) geschrieben wird
+- REST-API
+  - `PUT /api/v1/line?text=…` → hänge utf8-string als zeile an
+  - `PUT /api/v1/screen?text=…` → ersetze inhalt mit utf8-string
+  - `PUT /api/v1/location?x=…&y=…&text=…` → schreibe utf8-string an (x,y)
+  - `GET /api/v1/current` → liefert den aktuellen Inhalt
+- HTML-Frontend
+  - Spricht mit der REST-API
+  - Bietet die drei API-Interfaces als "hübsches Element" an
 
 ## Test-Sequenzen
 
